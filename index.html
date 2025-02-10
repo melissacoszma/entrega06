@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>7 <span id="medio">1/2</span></h1>
+      <div><img id="imgCarta" src="./img/back.jpg" alt=""></div>
+      <div id="botones"><button id="pidoCarta">CARTA</button> <button id="mePlanto">PLANTO</button></div>
+      <div id="puntos">PUNTOS: <span id="puntuacion"></span></div>
+      <div id="mensaje"></div>
+      <div><button id="nuevo">NUEVO JUEGO</button> <button id="unaMas">Y SI...</button></div>
+    </div>
+    
+    <script type="module" src="./src/model.js"></script> 
+    <script type="module" src="./src/motor.js"></script> 
+    <script type="module" src="./src/dom.js"></script> 
+
+  </body>
+</html>
