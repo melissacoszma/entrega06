@@ -5,6 +5,11 @@ import {
 
 } from "./model";
 
+// import { 
+//     botonPedir,
+    
+// } from "./main"; // declaro botonPedir en dom para no tener que importarlo de main y que haya imports circulares
+
 import {
     generaNumeroAleatorio,
     randomCarta,
@@ -15,11 +20,6 @@ import {
 } from "./motor"
 
 export const botonPedir = document.getElementById("pidoCarta");
-export const botonMePlanto = document.getElementById("mePlanto");
-export const botonNuevoJuego = document.getElementById("nuevo");
-export const botonUnaMas = document.getElementById("unaMas");
-
-
 
 export const muestraPuntuacion = () => {
     const puntuacion = document.getElementById("puntuacion");
@@ -78,6 +78,43 @@ export const mostrarCarta = (urlCarta) => {
     };
 };
 
+export const cargarPartida = () => {
+    muestraPuntuacion();
+    esconderNuevoJuego(true);
+    esconderUnaMas(true);
+    bloquearBotonMePlanto(false);
+};
+
+export const unaMas = () => {
+    muestraPuntuacion();
+    pidoUnaMas();
+    esconderUnaMas(true);
+};
+
+export const desactivaPideCarta = (boton) => {
+    boton.disabled = true;
+};
+
+export const mePlanto = () => {
+    desactivaPideCarta(botonPedir);
+    bloquearBotonMePlanto(true);
+    esconderNuevoJuego(false);
+    esconderUnaMas(false);
+    gameStatusOnPlantar();
+};
+
+export const nuevoJuego = () => {
+    estadoJuego.puntos = 0;
+    mensaje.textContent = "";
+    const urlCarta = obtenerUrlCarta(0);
+    mostrarCarta(urlCarta);
+    muestraPuntuacion();
+    esconderNuevoJuego(true);
+    bloquearBotonPedir(false);
+    esconderUnaMas(true);
+    bloquearBotonMePlanto(false);
+};
+
 export const pidoCarta = () => {                                                                            // no tengo muy claro que pidoCarta, winOrLost y el listener vayan integramente aquí
     const numAleatorio = generaNumeroAleatorio();
     const carta = randomCarta(numAleatorio);
@@ -87,6 +124,19 @@ export const pidoCarta = () => {                                                
     muestraPuntuacion(); // muestro la puntuación actualizada
     const urlCarta = obtenerUrlCarta(carta); // obtengo la URL de la carta
     mostrarCarta(urlCarta); // muestro la carta en la interfaz 
+    winOrLost();
+};
+
+export const pidoUnaMas = () => {                                                                     
+    const numAleatorio = generaNumeroAleatorio();
+    const carta = randomCarta(numAleatorio);
+    const punto = obtenerPuntosCarta(carta); 
+    const puntosSumados = sumarPuntos(punto); 
+    actualizarPuntos(puntosSumados); 
+    muestraPuntuacion(); 
+    const urlCarta = obtenerUrlCarta(carta); 
+    mostrarCarta(urlCarta); 
+    winOrLostUnaMas();
 };
 
 const winOrLost = () => {                         //lo ejecutaremos cada vez q se pida carta para comprobar si s eha ganado o perdido
@@ -109,57 +159,27 @@ const winOrLost = () => {                         //lo ejecutaremos cada vez q s
     };
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    muestraPuntuacion();
-    esconderNuevoJuego(true);
-    esconderUnaMas(true); 
-    bloquearBotonMePlanto(false);
-        
-    const desactivaPideCarta = (boton) =>{
-        boton.disabled = true;
+const winOrLostUnaMas = () => {                         //lo ejecutaremos cada vez q se pida una más para comprobar si se hubiera ganado o perdido
+    if (estadoJuego.puntos > estadoJuego.MAX_PUNTOS) {
+        mensaje.textContent = "¡Menos mal, hubieras perdido!";
+        //console.log("Has perdido");
+        bloquearBotonPedir(true);
+        bloquearBotonMePlanto(true);
+        esconderNuevoJuego(false);
+        esconderUnaMas(true);
     };
 
-    if (botonPedir) {
-        botonPedir.addEventListener("click", () => {
-            pidoCarta();
-            winOrLost(); // verifico si el jugador ha ganado o perdido 
-        });
-    }
-    
-
-    if (botonMePlanto) {
-        botonMePlanto.addEventListener("click", () => {
-            desactivaPideCarta(botonPedir);               
-            bloquearBotonMePlanto(true);
-            esconderNuevoJuego(false); 
-            esconderUnaMas(false);
-            gameStatusOnPlantar();
-        });
+    if (estadoJuego.puntos === estadoJuego.MAX_PUNTOS) {
+        mensaje.textContent = "¡Qué pena, habrías ganado!";
+        //console.log("Has ganado");
+        bloquearBotonPedir(true);
+        bloquearBotonMePlanto(true);
+        esconderNuevoJuego(false);
+        esconderUnaMas(true);
     };
+};
 
-    if (botonNuevoJuego) {
-        botonNuevoJuego.addEventListener("click", () => {
-            estadoJuego.puntos = 0;
-            mensaje.textContent = "";
-            const urlCarta = obtenerUrlCarta(0);
-            mostrarCarta(urlCarta);
-            muestraPuntuacion();
-            esconderNuevoJuego(true);
-            bloquearBotonPedir(false); 
-            esconderUnaMas(true); 
-            bloquearBotonMePlanto(false); 
-        });
-    };
 
-    if (botonUnaMas) {
-        botonUnaMas.addEventListener("click", () => {
-            muestraPuntuacion();
-            pidoCarta();
-            esconderUnaMas(true);
-        });
-    };
-    
-});
 
 export const obtenerUrlCarta = (carta) => {
     let urlCarta;
